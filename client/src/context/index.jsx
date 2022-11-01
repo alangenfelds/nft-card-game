@@ -8,9 +8,6 @@ import { createEventListeners } from "./createEventListeners";
 
 const GlobalContext = createContext();
 
-// ArturLan
-// Player2
-
 export const GlobalContextProvider = ({ children }) => {
   const [walletAddress, setWalletAddress] = useState("");
   const [provider, setProvider] = useState("");
@@ -19,6 +16,8 @@ export const GlobalContextProvider = ({ children }) => {
   const [gameData, setGameData] = useState({
     players: [], pendingBattles: [], activeBattle: null
   });
+  const [updateGameData, setUpdateGameData] = useState()
+  const [battleground, setBattleground] = useState('bg-astral')
   const [showAlert, setShowAlert] = useState({
     status: false,
     type: "info",
@@ -68,6 +67,7 @@ export const GlobalContextProvider = ({ children }) => {
         provider,
         walletAddress,
         setShowAlert,
+        setUpdateGameData
       });
     }
   }, [contract]);
@@ -113,7 +113,7 @@ export const GlobalContextProvider = ({ children }) => {
     }
 
     if (contract) fetchGameData();
-  }, [contract])
+  }, [contract, updateGameData])
 
   return (
     <GlobalContext.Provider
@@ -125,6 +125,8 @@ export const GlobalContextProvider = ({ children }) => {
         gameData,
         setBattleName,
         setShowAlert,
+        battleground,
+        setBattleground
       }}
     >
       {children}
