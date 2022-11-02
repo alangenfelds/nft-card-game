@@ -109,7 +109,7 @@ export const GlobalContextProvider = ({ children }) => {
         activeBattle
       })
 
-      console.log({ fethedBattles })
+      // console.log({ fethedBattles })
     }
 
     if (contract) fetchGameData();
