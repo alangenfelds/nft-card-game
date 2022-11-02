@@ -7,5 +7,6 @@ import PlayerInfo from './PlayerInfo'
 import ActionButton from './ActionButton'
 import Card from './Card'
 import GameInfo from './GameInfo'
+import OnboardModal from './OnboardModal'
 
-export { PageHOC, CustomInput, CustomButton, Alert, GameLoad, PlayerInfo, ActionButton, Card, GameInfo }
+export { PageHOC, CustomInput, CustomButton, Alert, GameLoad, PlayerInfo, ActionButton, Card, GameInfo, OnboardModal }

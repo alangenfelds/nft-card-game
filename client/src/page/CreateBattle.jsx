@@ -8,12 +8,14 @@ import styles from "../styles";
 
 const CreateBattle = () => {
   const navigate = useNavigate();
-  const { contract, battleName, setBattleName, gameData } = useGlobalContext();
+  const { contract, battleName, setBattleName, gameData, setErrorMessage } = useGlobalContext();
 
   const [waitBattle, setWaitBattle] = useState(false)
 
   useEffect(() => {
-    if (gameData?.activeBattle?.battleStatus === 0) {
+    if (gameData?.activeBattle?.battleStatus === 1) {
+      navigate(`/battle/${gameData.activeBattle.name}`)
+    } else if (gameData?.activeBattle?.battleStatus === 0) {
       setWaitBattle(true)
     }
   }, [gameData])
@@ -25,7 +27,8 @@ const CreateBattle = () => {
       await contract.createBattle(battleName);
       setWaitBattle(true);
     } catch (error) {
-      console.log('Create battle error: ', error)
+      // console.log('Create battle error: ', error)
+      setErrorMessage(error)
     }
   };
 
