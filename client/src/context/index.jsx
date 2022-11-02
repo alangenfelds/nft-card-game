@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect, useContext, useRef } from "react";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
 import { useNavigate } from "react-router-dom";
@@ -26,6 +26,9 @@ export const GlobalContextProvider = ({ children }) => {
     type: "info",
     message: "",
   });
+
+  const player1Ref = useRef(null);
+  const player2Ref = useRef(null);
 
   const navigate = useNavigate();
 
@@ -94,7 +97,9 @@ export const GlobalContextProvider = ({ children }) => {
         provider,
         walletAddress,
         setShowAlert,
-        setUpdateGameData
+        setUpdateGameData,
+        player1Ref,
+        player2Ref
       });
     }
   }, [contract, step]);
@@ -171,7 +176,9 @@ export const GlobalContextProvider = ({ children }) => {
         battleground,
         setBattleground,
         errorMessage,
-        setErrorMessage
+        setErrorMessage,
+        player1Ref,
+        player2Ref
       }}
     >
       {children}

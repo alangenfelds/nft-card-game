@@ -13,7 +13,7 @@ const img2 = generateRandomCardImage();
 const Card = ({ card, title, restStyles, cardRef, playerTwo }) => {
   return (
     <Tilt>
-      <div className={`${styles.cardContainer} ${restStyles}`}>
+      <div className={`${styles.cardContainer} ${restStyles}`} ref={cardRef}>
         <img
           src={playerTwo ? img2 : img1}
           alt="player card"
