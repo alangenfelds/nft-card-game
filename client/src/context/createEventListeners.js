@@ -1,30 +1,29 @@
-import { ethers } from 'ethers';
-import { defenseSound } from '../assets';
+import { ethers } from "ethers";
+import { defenseSound } from "../assets";
 
-import { ABI } from '../contract';
-import { playAudio, sparcle } from '../utils/animation';
+import { ABI } from "../contract";
+import { playAudio, sparcle } from "../utils/animation";
 
-const EMPTY_ACCOUNT = '0x0000000000000000000000000000000000000000';
+const EMPTY_ACCOUNT = "0x0000000000000000000000000000000000000000";
 
 const AddNewEvent = (eventFilter, provider, cb) => {
   provider.removeListener(eventFilter); // prevent multiple listeners for same event type
 
   provider.on(eventFilter, (logs) => {
-    const parsedLog = (new ethers.utils.Interface(ABI)).parseLog(logs);
-    cb(parsedLog)
+    const parsedLog = new ethers.utils.Interface(ABI).parseLog(logs);
+    cb(parsedLog);
   });
-}
+};
 
 const getCoords = (cardRef) => {
-  const { left, top, width, height } = cardRef?.current?.getBoundingClientRect();
-
+  const { left, top, width, height } =
+    cardRef?.current?.getBoundingClientRect();
 
   return {
     pageX: left + width / 2,
-    pageY: top + height / 2.25
-  }
-}
-
+    pageY: top + height / 2.25,
+  };
+};
 
 export const createEventListeners = ({
   contract,
@@ -40,39 +39,41 @@ export const createEventListeners = ({
 
   AddNewEvent(NewPlayerEventFilter, provider, (parsedLog) => {
     const { args } = parsedLogs;
-    console.log('New player created!', args)
+    console.log("New player created!", args);
 
     if (walletAddress.toLowerCase() === args.owner.toLowerCase()) {
       setShowAlert({
         status: true,
-        type: 'success',
-        message: 'Player has been successfully registered.'
-      })
+        type: "success",
+        message: "Player has been successfully registered.",
+      });
     }
-  })
+  });
 
   const NewBattleEventFilter = contract.filters.NewBattle();
 
   AddNewEvent(NewBattleEventFilter, provider, ({ args }) => {
-    console.log('New battle created!', args, walletAddress)
+    console.log("New battle created!", args, walletAddress);
 
-    if (walletAddress.toLowerCase() === args.player1.toLowerCase() || walletAddress.toLowerCase() === args.player2.toLowerCase()) {
+    if (
+      walletAddress.toLowerCase() === args.player1.toLowerCase() ||
+      walletAddress.toLowerCase() === args.player2.toLowerCase()
+    ) {
       navigate(`/battle/${args.battleName}`);
       setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
     }
-  })
+  });
 
   const BattleMoveEventFilter = contract.filters.BattleMove();
 
   AddNewEvent(BattleMoveEventFilter, provider, ({ args }) => {
-
-    console.log('Battle move initiated', args)
-  })
+    console.log("Battle move initiated", args);
+  });
 
   const RoundEndedEventFilter = contract.filters.RoundEnded();
 
   AddNewEvent(RoundEndedEventFilter, provider, ({ args }) => {
-    console.log('Round Ended', args, walletAddress);
+    console.log("Round Ended", args, walletAddress);
     for (let i = 0; i < args.damagedPlayers.length; i += 1) {
       if (args.damagedPlayers[i] !== EMPTY_ACCOUNT) {
         // somebody damaged
@@ -83,7 +84,6 @@ export const createEventListeners = ({
           // other player is damaged
           sparcle(getCoords(player2Ref));
         }
-
       } else {
         // nobody damaged
         playAudio(defenseSound);
@@ -91,7 +91,27 @@ export const createEventListeners = ({
     }
 
     setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
+  });
 
+  const BattleEndedEventFilter = contract.filters.BattleEnded();
 
-  })
-}
+  AddNewEvent(BattleEndedEventFilter, provider, ({ args }) => {
+    console.log("Battle ended!", args, walletAddress);
+
+    if (walletAddress.toLowerCase() === args.winner.toLowerCase()) {
+      setShowAlert({
+        status: true,
+        type: "success",
+        message: "You Won!",
+      });
+    } else if (walletAddress.toLowerCase() === args.loser.toLowerCase()) {
+      setShowAlert({
+        status: true,
+        type: "failure",
+        message: "You Lost!",
+      });
+    }
+
+    navigate("/create-battle");
+  });
+};

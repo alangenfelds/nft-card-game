@@ -7,12 +7,26 @@ import { alertIcon, gameRules } from "../assets";
 import styles from "../styles";
 
 const GameInfo = () => {
-  const { contract, gameData, setShowAlert } = useGlobalContext();
+  const { contract, gameData, setShowAlert, setErrorMessage } = useGlobalContext();
   const [toggleSidebar, setToggleSidebar] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleBattleExit = async () => {};
+  const handleBattleExit = async () => {
+    const battleName = gameData.activeBattle.name;
+
+    try {
+      await contract.quitBattle(battleName);
+      setShowAlert({
+        status: false,
+        type: "info",
+        message: `You are quitting the ${battlename} battle!`,
+      });
+    } catch (error) {
+      // console.log('Error exiting battle: ', error);
+      setErrorMessage(error);
+    }
+  };
 
   return (
     <>
@@ -28,11 +42,9 @@ const GameInfo = () => {
       {/* SIDEBAR */}
 
       <div
-        className={`${styles.gameInfoSidebar} ${styles.glassEffect} ${
-          styles.flexBetween
-        } backdrop-blur-3xl ${
-          toggleSidebar ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`${styles.gameInfoSidebar} ${styles.glassEffect} ${styles.flexBetween
+          } backdrop-blur-3xl ${toggleSidebar ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         <div className="flex flex-col">
           <div className={styles.gameInfoSidebarCloseBox}>
