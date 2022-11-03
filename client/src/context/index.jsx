@@ -178,7 +178,8 @@ export const GlobalContextProvider = ({ children }) => {
         errorMessage,
         setErrorMessage,
         player1Ref,
-        player2Ref
+        player2Ref,
+        updateCurrentWalletAddress
       }}
     >
       {children}

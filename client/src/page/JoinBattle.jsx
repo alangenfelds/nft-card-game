@@ -13,7 +13,9 @@ const JoinBattle = () => {
     setBattleName(battleName);
 
     try {
-      await contract.joinBattle(battleName);
+      await contract.joinBattle(battleName, {
+        gasLimit: 200000
+      });
       setShowAlert({
         status: true,
         type: "success",
@@ -24,6 +26,14 @@ const JoinBattle = () => {
       setErrorMessage(error)
     }
   }
+
+  useEffect(() => {
+    if (gameData?.activeBattle?.battleStatus === 3) {
+      // 3 - Active game
+      navigate(`/battle/${gameData.activeBattle.name}`)
+    }
+  }, [gameData])
+
 
   return (
     <>
